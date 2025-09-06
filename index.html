@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Decade HocTap</title>
+
+  <!-- Áp theme sớm để tránh nháy -->
+  <script>
+    (function(){
+      try{
+        var t = localStorage.getItem("ui.theme.decade");
+        if(t) document.documentElement.setAttribute("data-theme", t);
+      }catch(e){}
+    })();
+  </script>
+
+  <!-- Gate: ẩn UI cho tới khi henshin + flash/logo xong -->
+  <script>document.documentElement.classList.add('henshin-gate');</script>
+
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <!-- ===== TOPBAR (Logo giữa) ===== -->
+  <header class="topbar">
+    <!-- TRÁI -->
+    <nav class="nav-left" aria-label="Trái">
+      <button class="tab-btn lvl-2" data-tab="gallery">Gallery</button>
+      <button class="tab-btn lvl-1" data-tab="profile">Cá nhân</button>
+    </nav>
+
+    <!-- GIỮA: Logo Decade (Home) -->
+    <button class="tab-btn tab-logo is-active" data-tab="home" aria-label="Trang chủ">
+      <img src="./assets/decade/decade-logo.png" alt="Decade Logo">
+    </button>
+
+    <!-- PHẢI -->
+    <nav class="nav-right" aria-label="Phải">
+      <!-- chạy hiệu ứng rồi MỚI điều hướng -->
+      <a class="tab-btn lvl-1" href="./manage-courses/manage-courses.html"
+         data-link="./manage-courses/manage-courses.html">Khóa học</a>
+      <button class="tab-btn lvl-2" data-tab="login">Login</button>
+
+      <!-- Nút Sáng/Tối -->
+      <button class="tab-btn lvl-2 theme-toggle" type="button"
+              data-theme-toggle aria-pressed="false" title="Đổi giao diện Sáng/Tối" aria-label="Đổi giao diện">
+        <span class="icon" aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Rider Belt: chọn nhanh theme + điều hướng (chỉ hiện khi hover topbar/belt) -->
+  <nav id="rider-belt" class="belt-nav" aria-label="Rider belt quick themes"></nav>
+
+  <!-- ===== PAGE ===== -->
+  <main class="page">
+    <section id="tab-home" class="tab-panel is-active" tabindex="0">
+      <!-- ==== BANNER DECADE ==== -->
+      <section class="home-banner" aria-label="Decade banner">
+        <div class="banner-left">
+          <h1 class="banner-title">
+            Kamen Rider <span>Decade</span> UI
+          </h1>
+          <p class="banner-sub">
+            Sọc hồng neon • Frosted glass • Flash + Logo • Motion mượt.
+          </p>
+          <div class="banner-actions">
+            <a class="btn primary" href="./manage-courses/manage-courses.html" data-link="./manage-courses/manage-courses.html">Bắt đầu học</a>
+            <button class="btn" data-tab="gallery">Xem Gallery</button>
+          </div>
+        </div>
+
+        <!-- Ảnh Decade bên phải -->
+        <div class="banner-right">
+          <img
+            src="./assets/decade/decade-removebg-preview.png"
+            alt="Decade Hero"
+            decoding="async"
+            loading="eager"
+            draggable="false"
+          >
+        </div>
+      </section>
+
+      <!-- ===== Danh mục khóa học lấy từ localStorage ===== -->
+      <section id="home-courses" class="home-courses">
+        <div class="card-grid home">
+          <!-- các thẻ sẽ được app.js render -->
+        </div>
+      </section>
+      <!-- (ĐÃ XOÁ) Kamen Rider Logos section -->
+    </section>
+
+    <section id="tab-profile" class="tab-panel" tabindex="0">
+      <h1>Cá nhân</h1>
+      <p>Nội dung hồ sơ/cá nhân…</p>
+    </section>
+
+    <section id="tab-gallery" class="tab-panel" tabindex="0">
+      <h1>Gallery</h1>
+      <div class="card-grid">
+        <div class="card"><h3>Henshin</h3><p>belt_open / belt_close / henshin_effect</p></div>
+        <div class="card"><h3>Logo</h3><p>decade-logo.png</p></div>
+        <div class="card"><h3>Sounds</h3><p>sound_1 / sound_2</p></div>
+      </div>
+    </section>
+
+    <!-- ===== LOGIN (Decade – quẹt thẻ) ===== -->
+    <section id="tab-login" class="tab-panel" tabindex="0">
+      <h1>Login</h1>
+      <div class="login-wrap">
+        <div class="driver-slot" id="driver-slot" aria-label="Khe quẹt thẻ đăng nhập">
+          <div class="slot-glow"></div>
+          <div class="slot-bars"></div>
+          <div class="slot-label">Swipe Rider Pass</div>
+        </div>
+        <button class="rider-pass" id="rider-pass" type="button" aria-label="Rider Pass (kéo vào khe để đăng nhập)">
+          <img src="./assets/decade/decade-logo.png" alt="Rider Pass">
+          <span class="pass-chip"></span>
+        </button>
+        <audio id="login-swipe"  src="./assets/decade/sound_card_swipe.mp3" preload="auto"></audio>
+        <audio id="login-accept" src="./assets/decade/sound_login_ok.mp3"   preload="auto"></audio>
+      </div>
+      <p class="login-hint">Kéo thẻ “Rider Pass” vào khe để đăng nhập</p>
+    </section>
+  </main>
+
+  <!-- ===== OVERLAY (henshin + flash/logo) ===== -->
+  <div id="overlay" class="henshin-overlay" aria-hidden="true">
+    <div class="bg-frost"></div>
+    <div id="seq" class="seq"></div>
+    <div id="flash" class="flash"></div>
+    <img id="decade-logo" class="decade-logo" src="./assets/decade/decade-logo.png" alt="Decade emblem">
+
+    <!-- DRIVER (chỉ dùng khi vào web) -->
+    <button class="decade-driver" aria-label="Nhấn để đóng driver và tiếp tục">
+      <span class="shell left"></span>
+      <span class="shell right"></span>
+      <span class="core">
+        <span class="slot"></span>
+        <span class="pink-bars"></span>
+      </span>
+      <span class="tap-hint">Nhấn driver để tiếp tục</span>
+    </button>
+
+    <!-- Âm thanh -->
+    <audio id="sound-open"  src="./assets/decade/sound_1.mp3" preload="auto"></audio>
+    <audio id="sound-close" src="./assets/decade/sound_2.mp3" preload="auto"></audio>
+  </div>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Theme toggle -->
+  <script>
+    (function(){
+      const THEME_KEY = "ui.theme.decade";
+      const getTheme = ()=> document.documentElement.getAttribute('data-theme') || 'light';
+      const setTheme = (t)=>{
+        document.documentElement.setAttribute('data-theme', t);
+        try{ localStorage.setItem(THEME_KEY, t); }catch{}
+        const tbtn = document.querySelector('[data-theme-toggle]');
+        if(tbtn){
+          const icon = tbtn.querySelector('.icon');
+          if(icon) icon.textContent = (t === 'dark' ? '☀︎' : '🌙');
+          tbtn.setAttribute('aria-pressed', String(t === 'dark'));
+        }
+      };
+      setTheme(getTheme());
+      const tbtn = document.querySelector('[data-theme-toggle]');
+      if(tbtn){
+        tbtn.addEventListener('click', ()=>{
+          const cur = getTheme();
+          setTheme(cur === 'dark' ? 'light' : 'dark');
+        });
+      }
+      document.querySelectorAll('.home-banner [data-tab]').forEach(b=>{
+        b.addEventListener('click', ()=>{
+          const target = b.getAttribute('data-tab');
+          const btn = document.querySelector('.tab-btn[data-tab="'+target+'"]');
+          if(btn) btn.click();
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

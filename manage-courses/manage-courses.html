@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quản lý Khóa học • Decade Admin</title>
+
+  <!-- Áp theme sớm để tránh nháy -->
+  <script>
+    (function(){
+      try{
+        var t = localStorage.getItem("ui.theme.decade");
+        if(t) document.documentElement.setAttribute("data-theme", t);
+      }catch(e){}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="manage-courses.css" />
+</head>
+<body>
+  <!-- ===== TOPBAR: trái | logo giữa | phải ===== -->
+  <header class="topbar">
+    <!-- BÊN TRÁI -->
+    <nav class="nav-left" aria-label="Trái">
+      <button class="tab-btn lvl-2" data-tab="profile">Cá nhân</button>
+      <button class="tab-btn lvl-1 is-active" data-tab="list">Danh sách</button>
+    </nav>
+
+    <!-- GIỮA: Logo Decade (về Trang chủ) -->
+    <a class="tab-btn tab-logo" href="../index.html" data-link="../index.html">
+      <img src="../assets/decade/decade-logo.png" alt="Decade Logo">
+    </a>
+
+    <!-- BÊN PHẢI -->
+    <nav class="nav-right" aria-label="Phải">
+      <button class="tab-btn lvl-1" data-tab="create">Tạo khóa học</button>
+      <button class="tab-btn lvl-2" data-tab="lessons">Đăng bài giảng</button>
+
+      <!-- Nút Sáng/Tối đồng bộ -->
+      <button class="tab-btn lvl-2 theme-toggle" type="button"
+              data-theme-toggle aria-pressed="false" title="Đổi giao diện Sáng/Tối" aria-label="Đổi giao diện">
+        <span class="icon" aria-hidden="true">🌙</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ===== PAGE ===== -->
+  <main class="container">
+    <!-- 1) Danh sách khóa học -->
+    <section id="tab-list" class="tab-panel is-active" tabindex="0">
+      <header class="section-head">
+        <h2>Danh sách khóa học đã đăng</h2>
+        <div class="decor"></div>
+      </header>
+      <div id="course-list" class="card-grid"></div>
+      <p class="helper" id="empty-hint" style="display:none">
+        Chưa có khóa học nào. Chuyển sang tab <b>Tạo khóa học</b> để thêm mới.
+      </p>
+    </section>
+
+    <!-- 2) Cá nhân -->
+    <section id="tab-profile" class="tab-panel" tabindex="0">
+      <header class="section-head">
+        <h2>Cá nhân</h2>
+        <div class="decor"></div>
+      </header>
+      <p>Thông tin tài khoản/quản trị…</p>
+    </section>
+
+    <!-- 3) Tạo khóa học -->
+    <section id="tab-create" class="tab-panel" tabindex="0">
+      <header class="section-head">
+        <h2>Tạo khóa học</h2>
+        <div class="decor"></div>
+      </header>
+
+      <div class="decade-form">
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="c-name">Tên khóa học</label>
+            <input id="c-name" class="input" placeholder="VD: Lập trình Web cơ bản" />
+          </div>
+          <div class="field">
+            <label class="label" for="c-img">Hình ảnh khóa học</label>
+            <input id="c-img" type="file" accept="image/*" class="input" />
+            <div class="helper">Hỗ trợ JPG/PNG. Ảnh lưu base64 trong trình duyệt.</div>
+          </div>
+          <div class="field">
+            <label class="label" for="c-cat">Danh mục</label>
+            <select id="c-cat" class="select">
+              <option value="programming">Lập trình</option>
+              <option value="music">Âm nhạc</option>
+              <option value="design">Design</option>
+              <option value="language">Language</option>
+              <option value="other">Khác</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:10px">
+          <label class="label" for="c-info">Thông tin khóa học</label>
+          <textarea id="c-info" class="textarea" placeholder="Mô tả ngắn gọn..."></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="btn-add">Tạo khóa học</button>
+          <button class="btn" id="btn-reset">Làm mới</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4) Đăng bài giảng -->
+    <section id="tab-lessons" class="tab-panel" tabindex="0">
+      <header class="section-head">
+        <h2>Đăng bài giảng</h2>
+        <div class="decor"></div>
+      </header>
+
+      <div class="decade-form">
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="sel-course">Chọn khóa học</label>
+            <select id="sel-course" class="select"></select>
+          </div>
+          <div class="field">
+            <label class="label" for="l-title">Tên bài giảng</label>
+            <input id="l-title" class="input" placeholder="VD: Bài 01 - Giới thiệu" />
+          </div>
+        </div>
+
+        <div class="row radiogroup">
+          <label class="radio"><input type="radio" name="vsrc" value="link" checked /> Dùng link video</label>
+          <label class="radio"><input type="radio" name="vsrc" value="upload" /> Upload file video</label>
+        </div>
+
+        <div id="row-link" class="row">
+          <input id="l-link" class="input grow" placeholder="https://... (YouTube/Vimeo/MP4/...)"/>
+        </div>
+        <div id="row-upload" class="row" style="display:none">
+          <input id="l-file" type="file" accept="video/*" class="input" />
+          <span class="helper">Upload chỉ dùng trong phiên hiện tại. Khuyến nghị dùng link.</span>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="btn-add-lesson">Đăng bài giảng</button>
+          <button class="btn" id="btn-clear-lesson">Xóa form</button>
+        </div>
+
+        <div class="lessons-box">
+          <div class="badge"><span class="dot"></span> Danh sách bài giảng của khóa học đã chọn</div>
+          <ul id="lesson-list" class="lesson-list"></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Dialog Sửa khóa học -->
+  <div id="dlg" class="dialog-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="dialog">
+      <header>Sửa khóa học</header>
+      <div class="content">
+        <div class="form-grid">
+          <div class="field">
+            <label class="label" for="e-name">Tên khóa học</label>
+            <input id="e-name" class="input"/>
+          </div>
+          <div class="field">
+            <label class="label" for="e-img">Đổi hình ảnh</label>
+            <input id="e-img" type="file" accept="image/*" class="input"/>
+            <div class="helper">Để trống nếu giữ ảnh cũ.</div>
+          </div>
+          <div class="field">
+            <label class="label" for="e-cat">Danh mục</label>
+            <select id="e-cat" class="select">
+              <option value="programming">Lập trình</option>
+              <option value="music">Âm nhạc</option>
+              <option value="design">Design</option>
+              <option value="language">Language</option>
+              <option value="other">Khác</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="e-info">Thông tin khóa học</label>
+          <textarea id="e-info" class="textarea"></textarea>
+        </div>
+      </div>
+      <footer>
+        <button class="btn" id="dlg-cancel">Hủy</button>
+        <button class="btn primary" id="dlg-save">Lưu</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Overlay hiệu ứng chuyển tab -->
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="bg-frost"></div>
+    <div id="flash" class="flash"></div>
+    <img id="decade-logo" class="decade-logo" src="../assets/decade/decade-logo.png" alt="Decade logo">
+    <audio id="sound-tab" preload="auto" src="../assets/decade/Sound_effect.mp3"></audio>
+  </div>
+
+  <script src="manage-courses.js"></script>
+</body>
+</html>
